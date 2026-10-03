@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMI Calculator - Calculate Monthly Loan EMI, Total Interest & Schedule</title>
+    <meta name="description" content="Calculate your monthly EMI for Home, Property, Vehicle, Personal or Business loans with real-time interactive chart and complete repayment schedule.">
+
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.net/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Chart.js & html2pdf CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.net/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Site Header -->
+    <header class="site-header">
+        <div class="container header-wrapper">
+            <a href="#" class="brand-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-calculator"></i>
+                </div>
+                <div class="brand-title">EMI<span>Calc</span></div>
+            </a>
+            <div class="header-badge">
+                <i class="fa-solid fa-shield-halved"></i> 100% Accurate & Free
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Hero Title -->
+        <section class="hero-section">
+            <h1 class="hero-title">EMI Calculator</h1>
+            <p class="hero-subtitle">Calculate your monthly loan payment, total interest and complete repayment schedule instantly.</p>
+        </section>
+
+        <!-- Validation Alert Box -->
+        <div id="validationAlert" class="validation-alert hidden"></div>
+
+        <!-- Main Calculator Grid -->
+        <div class="calculator-grid">
+
+            <!-- LEFT COLUMN: INPUTS & CONTROLS -->
+            <div class="card inputs-card">
+                <div class="card-header-flex">
+                    <h2 class="card-title"><i class="fa-solid fa-sliders"></i> Loan Parameters</h2>
+                    
+                    <!-- Property Loan Toggle Switch -->
+                    <label class="toggle-wrapper" title="Enable Property Value & Down Payment mode">
+                        <span class="toggle-label">Property Loan</span>
+                        <div class="switch">
+                            <input type="checkbox" id="propertyModeToggle">
+                            <span class="slider-toggle"></span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- OPTIONAL PROPERTY LOAN FIELDS SECTION -->
+                <div id="propertyFieldsSection" class="hidden">
+                    <!-- Property Value -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="propertyValueInput" class="input-label">
+                                Property Value
+                            </label>
+                            <span class="unit-words" id="propertyValueWords">50 Lakh</span>
+                        </div>
+                        <div class="input-box-wrapper">
+                            <span class="currency-prefix">₹</span>
+                            <input type="text" id="propertyValueInput" class="custom-input" value="50,00,000" placeholder="50,00,000">
+                        </div>
+                        <div class="range-slider-wrapper">
+                            <input type="range" id="propertyValueSlider" class="custom-slider" min="500000" max="20000000" step="100000" value="5000000">
+                            <div class="slider-limits">
+                                <span>₹5L</span>
+                                <span>₹2 Cr</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Down Payment -->
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="downPaymentInput" class="input-label">
+                                Down Payment <span id="downPaymentPctLabel" class="text-xs text-muted font-normal">(30% of value)</span>
+                            </label>
+                            <span class="unit-words" id="downPaymentWords">15 Lakh</span>
+                        </div>
+                        <div class="input-box-wrapper">
+                            <span class="currency-prefix">₹</span>
+                            <input type="text" id="downPaymentInput" class="custom-input" value="15,00,000" placeholder="15,00,000">
+                        </div>
+                        <div class="range-slider-wrapper">
+                            <input type="range" id="downPaymentSlider" class="custom-slider" min="0" max="5000000" step="50000" value="1500000">
+                            <div class="slider-limits">
+                                <span>₹0</span>
+                                <span>Property Value</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. LOAN AMOUNT -->
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="loanAmountInput" class="input-label">
+                            Loan Amount
+                        </label>
+                        <span class="unit-words" id="loanAmountWords">25 Lakh</span>
+                    </div>
+                    <div class="input-box-wrapper">
+                        <span class="currency-prefix">₹</span>
+                        <input type="text" id="loanAmountInput" class="custom-input" value="25,00,000" placeholder="25,00,000">
+                    </div>
+                    <div class="range-slider-wrapper">
+                        <input type="range" id="loanAmountSlider" class="custom-slider" min="10000" max="10000000" step="10000" value="2500000">
+                        <div class="slider-limits">
+                            <span>₹10,000</span>
+                            <span>₹1 Cr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. INTEREST RATE -->
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="interestRateInput" class="input-label">
+                            Interest Rate (% p.a.)
+                        </label>
+                    </div>
+                    <div class="input-box-wrapper">
+                        <input type="number" id="interestRateInput" class="custom-input no-prefix" value="8.5" step="0.1" min="0" max="30">
+                    </div>
+                    <div class="range-slider-wrapper">
+                        <input type="range" id="interestRateSlider" class="custom-slider" min="1" max="30" step="0.1" value="8.5">
+                        <div class="slider-limits">
+                            <span>1%</span>
+                            <span>30%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. LOAN TENURE -->
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="tenureInput" class="input-label" id="tenureLabel">
+                            Loan Tenure (Years)
+                        </label>
+                        <div class="tenure-unit-toggle">
+                            <button type="button" class="unit-btn active" id="tenureUnitYears">Years</button>
+                            <button type="button" class="unit-btn" id="tenureUnitMonths">Months</button>
+                        </div>
+                    </div>
+                    <div class="input-box-wrapper">
+                        <input type="number" id="tenureInput" class="custom-input no-prefix" value="10" min="1" max="360">
+                    </div>
+                    <div class="range-slider-wrapper">
+                        <input type="range" id="tenureSlider" class="custom-slider" min="1" max="30" step="1" value="10">
+                        <div class="slider-limits">
+                            <span>1 Yr</span>
+                            <span id="tenureMaxLabel">30 Yr</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="controls-bar">
+                    <button type="button" id="calculateBtn" class="btn-primary">
+                        <i class="fa-solid fa-calculator"></i> Calculate EMI
+                    </button>
+                    <button type="button" id="resetBtn" class="btn-secondary">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: RESULTS CARD & DOUGHNUT CHART -->
+            <div class="card results-card" id="resultsCard">
+                <!-- Large Highlighted EMI Card -->
+                <div class="emi-highlight-box">
+                    <div class="emi-title-label">Monthly EMI</div>
+                    <div class="emi-value-amount" id="emiDisplay">₹30,996</div>
+                </div>
+
+                <!-- 3-Way Amount Breakdown Grid -->
+                <div class="breakdown-grid">
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span class="indicator-dot principal"></span> Principal
+                        </div>
+                        <div class="breakdown-amount" id="principalDisplay">₹25,00,000</div>
+                        <div class="breakdown-pct" id="principalPct">67.2%</div>
+                    </div>
+
+                    <div class="breakdown-item">
+                        <div class="breakdown-label">
+                            <span class="indicator-dot interest"></span> Total Interest
+                        </div>
+                        <div class="breakdown-amount" id="interestDisplay">₹12,19,571</div>
+                        <div class="breakdown-pct" id="interestPct">32.8%</div>
+                    </div>
+
+                    <div class="breakdown-item featured">
+                        <div class="breakdown-label">
+                            Total Payable
+                        </div>
+                        <div class="breakdown-amount" id="totalPayableDisplay">₹37,19,571</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Doughnut Chart Canvas -->
+                <div class="chart-container-box">
+                    <canvas id="emiChart"></canvas>
+                </div>
+
+                <!-- Utility Buttons -->
+                <div class="result-actions-flex">
+                    <button type="button" id="copyEmiBtn" class="action-btn">
+                        <i class="fa-regular fa-copy"></i> Copy Result
+                    </button>
+                    <button type="button" id="shareBtn" class="action-btn">
+                        <i class="fa-solid fa-share-nodes"></i> Share
+                    </button>
+                    <button type="button" id="downloadPdfBtn" class="action-btn">
+                        <i class="fa-solid fa-file-pdf"></i> PDF Statement
+                    </button>
+                    <button type="button" id="printBtn" class="action-btn">
+                        <i class="fa-solid fa-print"></i> Print
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- AMORTIZATION SCHEDULE SECTION -->
+        <section class="schedule-section">
+            <div class="accordion-header" id="scheduleAccordionToggle">
+                <div class="accordion-title">
+                    <i class="fa-solid fa-table-list text-blue-600"></i> View Repayment Schedule
+                </div>
+                <i class="fa-solid fa-chevron-down accordion-icon" id="scheduleAccordionIcon"></i>
+            </div>
+
+            <div class="schedule-content-wrapper hidden" id="scheduleContent">
+                <div class="schedule-toolbar">
+                    <div class="view-toggle-pills">
+                        <button type="button" class="pill-btn active" id="scheduleViewYearly">Yearly Summary</button>
+                        <button type="button" class="pill-btn" id="scheduleViewMonthly">Monthly Detailed</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="schedule-table">
+                        <thead id="scheduleTableHead">
+                            <!-- Injected dynamically -->
+                        </thead>
+                        <tbody id="scheduleTableBody">
+                            <!-- Injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <div class="disclaimer-box">
+            <i class="fa-solid fa-circle-info"></i> EMI calculations are estimates and may vary depending on the lender, applicable interest rate, fees and other charges.
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 EMI Calculator. Designed for smart financial decisions.</p>
+        </div>
+    </footer>
+
+    <!-- App JavaScript Modules -->
+    <script src="js/calculator.js"></script>
+    <script src="js/chart-handler.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
